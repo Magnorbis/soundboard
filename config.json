@@ -1,0 +1,74 @@
+{
+  "slot_0": {
+    "name": "Vine Boom",
+    "file": "C:/Users/Jens/Desktop/Projects/Soundboard/sounds/vine-boom.mp3",
+    "volume": 0.2,
+    "shortcut": ""
+  },
+  "slot_1": {
+    "name": "Vogol",
+    "file": "C:/Users/Jens/Desktop/Projects/Soundboard/sounds/vogol.mp3",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_2": {
+    "name": "Sound 3",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_3": {
+    "name": "Sound 4",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_4": {
+    "name": "Sound 5",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_5": {
+    "name": "Sound 6",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_6": {
+    "name": "Sound 7",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_7": {
+    "name": "Sound 8",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_8": {
+    "name": "Sound 9",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_9": {
+    "name": "Sound 10",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_10": {
+    "name": "Sound 11",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  },
+  "slot_11": {
+    "name": "Sound 12",
+    "file": "",
+    "volume": 1.0,
+    "shortcut": ""
+  }
+}
