@@ -8,9 +8,14 @@ from functools import partial
 import pystray
 from PIL import Image, ImageDraw
 from voicemeeter import vm_connect
-import pygame
+import sys
 
-CONFIG_FILE = "config.json"
+def resource_path(relative_path: str) -> str:
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+CONFIG_FILE = resource_path("config.json")
 ROWS = 3
 COLS = 4
 TOTAL = ROWS * COLS
@@ -37,7 +42,6 @@ def save_config():
 
 config = load_config()
 
-
 # -------------------- VOICEMEETER CONNECTION --------------------
 vm = None
 
@@ -53,9 +57,6 @@ def is_vm_ready():
     return vm is not None
 
 # -------------------- SOUNDS  --------------------
-pygame.mixer.init(frequency=44100, channels=2)
-os.environ["SDL_AUDIODRIVER"] = "directsound"
-
 def play_sound(key):
     info = config.get(key)
     if not info:
