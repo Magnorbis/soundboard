@@ -10,12 +10,15 @@ from PIL import Image, ImageDraw
 from voicemeeter import vm_connect
 import sys
 
-def resource_path(relative_path: str) -> str:
-    if hasattr(sys, "_MEIPASS"):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
+def get_config_path():
+    if getattr(sys, "frozen", False):
+        base_path = os.path.join(os.environ["APPDATA"], "Soundboard")
+        os.makedirs(base_path, exist_ok=True)
+        return os.path.join(base_path, "config.json")
+    else:
+        return os.path.join(os.path.abspath("."), "config.json")
 
-CONFIG_FILE = resource_path("config.json")
+CONFIG_FILE = get_config_path()
 ROWS = 3
 COLS = 4
 TOTAL = ROWS * COLS
@@ -72,7 +75,6 @@ def play_sound(key):
         return
 
     try:
-
         vm.set("Recorder.stop", 1)
         vm.set("Recorder.load", file_path)
 

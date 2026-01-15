@@ -1,6 +1,5 @@
 import voicemeeterlib
 from contextlib import contextmanager
-import threading
 import time
 
 # -------------------- CONNECTION --------------------
