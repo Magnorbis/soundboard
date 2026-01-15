@@ -1,17 +1,19 @@
-import voicemeeterlib
+from voicemeeterlib import api
 from contextlib import contextmanager
 import time
 
-# -------------------- CONNECTION --------------------
+# Holds the active Voicemeeter API instance
+vm = None
+
+# Create and manage a Voicemeeter connection lifecycle
 @contextmanager
 def vm_connect(mode="banana"):
-    """
-    Context manager for connecting to Voicemeeter.
-    mode: "basic", "banana", or "potato"
-    """
-    vm = voicemeeterlib.api(mode)
+    global vm
+    vm = api(mode)
     try:
         vm.login()
+
+        # Wait until Voicemeeter is fully ready
         ready = False
         for _ in range(20):
             try:
