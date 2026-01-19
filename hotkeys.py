@@ -5,12 +5,18 @@ from functools import partial
 hotkey_handles = {}
 
 # Register all configured keyboard shortcuts and link them to sound playback
-def register_hotkeys(config, play_sound):
+def register_hotkeys(config, play_sound, stop_sound):
     for key, info in config.items():
         shortcut = info.get("shortcut")
         if shortcut:
             try:
-                handle = keyboard.add_hotkey(shortcut, partial(play_sound, key))
+                # Use stop_sound if key is the stop button
+                if key == "stop":
+                    callback = stop_sound
+                else:
+                    callback = partial(play_sound, key)
+
+                handle = keyboard.add_hotkey(shortcut, callback)
                 hotkey_handles[key] = handle
             except ValueError:
                 print(f"Invalid shortcut: {shortcut}")

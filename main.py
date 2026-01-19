@@ -2,7 +2,7 @@ import threading
 from functools import partial
 import ttkbootstrap as ttk
 from config import config, save_config
-from ui import build_ui, play_sound
+from ui import build_ui, play_sound, stop_sound
 from voicemeeter import vm_connect
 import hotkeys
 import tray
@@ -27,6 +27,7 @@ except Exception as e:
 
 # Wrap play_sound so vm and config are automatically passed
 play_sound_with_vm = partial(play_sound, vm, config)
+stop_sound_with_vm = partial(stop_sound, vm)
 
 # -------------------- MAIN WINDOW --------------------
 # Create the main Tkinter window
@@ -51,13 +52,13 @@ for c in range(COLS):
     root.grid_columnconfigure(c, weight=1)
 
 # Build the UI grid of sound buttons
-cards = build_ui(root, config, save_config, play_sound_with_vm, ROWS, COLS)
+cards = build_ui(root, config, save_config, play_sound_with_vm, stop_sound_with_vm, ROWS, COLS)
 save_config(config)
 
 # -------------------- HOTKEY THREAD --------------------
 # Register global hotkeys and keep the listener running
 def hotkey_thread():
-    hotkeys.register_hotkeys(config, play_sound_with_vm)
+    hotkeys.register_hotkeys(config, play_sound_with_vm, stop_sound_with_vm)
     import keyboard
     keyboard.wait()
 
