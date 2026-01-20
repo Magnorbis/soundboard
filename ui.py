@@ -18,6 +18,11 @@ modifiers_map = {"Shift_L": "Shift", "Shift_R": "Shift",
                  "Control_L": "Ctrl", "Control_R": "Ctrl",
                  "Alt_L": "Alt", "Alt_R": "Alt"}
 
+# Configurable min/max dB for mapping
+MIN_DB = -60.0
+MAX_DB = 12.0
+EXPONENT = 1.6
+
 # Play a sound through Voicemeeter using the given slot key
 def play_sound(vm, config, key):
     info = config.get(key)
@@ -40,9 +45,10 @@ def play_sound(vm, config, key):
         vm.set("Recorder.stop", 1)
         vm.set("Recorder.load", file_path)
 
-        # Convert 0.0-1.0 slider value to Voicemeeter gain range
-        volume = float(info.get("volume", 1.0))
-        vm.set("Recorder.gain", -60.0 + volume * 72)
+        # Use the slider value as dB gain
+        slider_val = float(info.get("volume", 0.5))
+        gain_db = slider_to_db(slider_val)
+        vm.set("Recorder.gain", gain_db)
 
         # Start playback
         vm.set("Recorder.play", 1)
@@ -152,13 +158,42 @@ def rename(key, label, config, save_config):
         label.config(text=new)
         save_config(config)
 
-# Update the volume for a sound slot and persist it
-def update_volume(key, var, label, config, save_config, slider_value=None):
-    val = round(var.get(), 2)
-    config[key]["volume"] = val
+# Update the volume for a sound slot and persist it (0.0-1.0 in config)
+def update_volume(key, var, label, config, save_config):
+    slider_val = round(var.get(), 2)
+    config[key]["volume"] = slider_val
+
+    gain_db = slider_to_db(slider_val)
+    percent = int(slider_val * 100)
+
     if label:
-        label.config(text=f"{val:.2f}")
+        label.config(text=f"{percent}% ({gain_db:.1f} dB)")
+
     save_config(config)
+
+def slider_to_db(v: float) -> float:
+    if v <= 0.25:
+        # -60 -> -48
+        return -60 + (v / 0.25) * 12
+    elif v <= 0.5:
+        # -48 -> -24
+        return -48 + ((v - 0.25) / 0.25) * 24
+    elif v <= 0.75:
+        # -24 -> 0
+        return -24 + ((v - 0.5) / 0.25) * 24
+    else:
+        # 0 -> +12
+        return 0 + ((v - 0.75) / 0.25) * 12
+
+def db_to_slider(db: float) -> float:
+    if db <= -48:
+        return (db + 60) / 12 * 0.25
+    elif db <= -24:
+        return 0.25 + (db + 48) / 24 * 0.25
+    elif db <= 0:
+        return 0.5 + (db + 24) / 24 * 0.25
+    else:
+        return 0.75 + db / 12 * 0.25
 
 # Build the main grid-based UI with sound cards and controls
 def build_ui(root, config, save_config, play_sound, stop_sound, rows=3, cols=4):
@@ -173,7 +208,7 @@ def build_ui(root, config, save_config, play_sound, stop_sound, rows=3, cols=4):
         key = f"slot_{i}"
 
         if key not in config:
-            config[key] = {"name": f"Sound {i + 1}", "file": "", "volume": 1.0, "shortcut": ""}
+            config[key] = {"name": f"Sound {i + 1}", "file": "", "volume": 0.5, "shortcut": ""}
 
         r, c = i // cols, i % cols
 
@@ -220,12 +255,14 @@ def build_ui(root, config, save_config, play_sound, stop_sound, rows=3, cols=4):
         vol_row = ttk.Frame(card)
         vol_row.pack(fill="x", pady=(4, 0))
 
-        vol = ttk.DoubleVar(value=config[key]["volume"])
+        vol_val = config[key].get("volume", 0.5)
+        vol = ttk.DoubleVar(value=vol_val)
 
-        vol_slider = ttk.Scale(vol_row, from_=0.0, to=1.0, variable=vol)
+        vol_slider = ttk.Scale(vol_row, from_=0.0, to=1.0, variable=vol, orient="horizontal")
         vol_slider.pack(side="left", fill="x", expand=True, padx=4)
 
-        vol_value = ttk.Label(vol_row, text=f"{vol.get():.2f}", width=4)
+        gain_db = slider_to_db(vol_val)
+        vol_value = ttk.Label(vol_row, text=f"{int(vol_val*100)}% ({gain_db:.1f} dB)", width=14, anchor="e")
         vol_value.pack(side="left")
 
         vol_slider.configure(command=lambda val, k=key, v=vol, l=vol_value: update_volume(k, v, l, config, save_config))
