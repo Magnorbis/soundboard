@@ -39,7 +39,7 @@ https://vb-audio.com/Voicemeeter/banana.htm
 ## Installation
 1. [Download](https://vb-audio.com/Voicemeeter/banana.htm) and install **Voicemeeter Banana**  
    Make sure it starts correctly at least once.
-2. [Download](https://github.com/Magnorbis/soundboard/releases/tag/v1.0.0) and run the **Soundboard installer**.
+2. [Download](https://github.com/Magnorbis/soundboard/releases) and run the **Soundboard installer**.
 3. Launch Soundboard.
 4. Assign audio files to the buttons.
 5. Adjust volumes and set optional keyboard shortcuts.
